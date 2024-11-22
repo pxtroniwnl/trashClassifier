@@ -5,7 +5,7 @@ from ultralytics import YOLO
 import time
 
 # Cargar el modelo
-model = YOLO("C:/Users/Alejandro/Desktop/Trash/runs/classify/train4/weights/best.pt")
+model = YOLO("runs/classify/train4/weights/best.pt")
 
 def make_prediction(frame):
     results = model(frame)
