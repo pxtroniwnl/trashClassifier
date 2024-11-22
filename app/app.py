@@ -2,7 +2,6 @@ import streamlit as st
 import cv2
 import numpy as np
 from ultralytics import YOLO
-import time
 
 # Cargar el modelo
 model = YOLO("runs/classify/train4/weights/best.pt")
@@ -33,58 +32,14 @@ def make_prediction(frame):
 # Establecer el título y la descripción de la aplicación
 st.set_page_config(page_title="Clasificador de Basura", layout="wide")
 st.title("Clasificador de Basura")
-st.markdown("""Esta aplicación utiliza un modelo de **YOLO** para clasificar residuos a través de la cámara en tiempo real o mediante imágenes cargadas.""")
-
+st.markdown("""Esta aplicación utiliza un modelo de **YOLO** para clasificar residuos mediante imágenes cargadas.""")
+        
 # Opción para subir imágenes
 uploaded_file = st.file_uploader("Sube una imagen", type=["jpg", "jpeg", "png"])
 
-# Crear contenedores vacíos para la imagen y la predicción
+# Contenedor para la imagen y la predicción
 image_box = st.empty()
 prediction_box = st.empty()
-
-# Inicializar el tiempo de la última predicción
-last_prediction_time = time.time()
-
-# Estado de la clasificación
-if 'is_classifying' not in st.session_state:
-    st.session_state.is_classifying = False
-
-# Colocar un botón para iniciar la predicción de la cámara
-if st.button("Iniciar Clasificación desde la cámara"):
-    st.session_state.is_classifying = True
-    st.success("Clasificación iniciada. ¡Mira la cámara!")
-
-# Botón para detener la clasificación
-if st.button("Detener Clasificación"):
-    st.session_state.is_classifying = False
-    st.success("Clasificación detenida.")
-
-# Mostrar video en tiempo real si está en modo de clasificación
-if st.session_state.is_classifying:
-    camera = cv2.VideoCapture(0)  # Asegúrate de que el índice de la cámara sea correcto
-    while True:
-        ret, frame = camera.read()
-        if not ret:
-            st.write("No se pudo acceder a la cámara.")
-            break
-        
-        # Convertir la imagen a RGB
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        
-        # Redimensionar la imagen a 700x500 píxeles
-        frame_resized = cv2.resize(frame_rgb, (700, 500))
-        
-        # Mostrar la imagen en el contenedor de la cámara
-        image_box.image(frame_resized, channels="RGB", use_container_width=False)
-        
-        # Actualizar la predicción cada 3 segundos
-        current_time = time.time()
-        if current_time - last_prediction_time >= 3:
-            prediction = make_prediction(frame)
-            prediction_box.markdown(prediction)
-            last_prediction_time = current_time  # Actualizar el tiempo de la última predicción
-
-    camera.release()  # Asegúrate de liberar la cámara al finalizar
 
 # Clasificación de la imagen subida
 if uploaded_file is not None:
