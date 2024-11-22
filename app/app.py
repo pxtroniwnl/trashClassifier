@@ -92,7 +92,11 @@ if st.session_state.is_classifying:
     while True:
         ret, frame = camera.read()
         if not ret:
+            st.write("No se pudo acceder a la cámara.")
             break
+        
+        # Mostrar el frame en Streamlit
+        st.image(frame, channels="BGR")
         
         # Convertir la imagen a RGB
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
